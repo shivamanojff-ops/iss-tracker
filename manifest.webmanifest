@@ -1,0 +1,16 @@
+{
+  "name": "ISS Tracker",
+  "short_name": "ISS",
+  "description": "Live ISS globe, flyover countdown and a camera sky view.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#02050a",
+  "theme_color": "#02050a",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml" }
+  ]
+}

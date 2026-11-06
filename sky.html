@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ISS Sky View</title>
+<meta name="theme-color" content="#02050a">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+#bg{position:fixed;inset:0;background:radial-gradient(120% 80% at 50% 110%,#0b2236 0%,#050d18 45%,#02050a 100%)}
+video{position:fixed;inset:0;width:100%;height:100%;object-fit:cover;display:none}
+#sky{position:fixed;inset:0;width:100%;height:100%;touch-action:none}
+.hud-top{position:fixed;left:12px;right:12px;top:calc(12px + env(safe-area-inset-top));display:flex;gap:10px;align-items:stretch}
+.hud-top .panel{padding:10px 14px}
+.cdbox{flex:1;min-width:0}
+.cdbox .cd{font-family:var(--display);font-weight:700;font-size:26px;color:var(--accent);letter-spacing:-.02em;font-variant-numeric:tabular-nums;line-height:1.1}
+.cdbox .sub{color:var(--mid);font-size:12px;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.back{display:flex;align-items:center;text-decoration:none;color:var(--mid);font-weight:600;padding:0 14px!important}
+.hud-bot{position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:8px}
+.facing{align-self:center;font-family:var(--display);font-weight:700;padding:7px 14px;font-variant-numeric:tabular-nums}
+.tools{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.tools .btn{padding:9px 12px;background:rgba(6,14,24,.75)}
+.drawer{display:none;padding:12px 14px}
+.drawer.open{display:block}
+.drawer .r{display:flex;align-items:center;gap:10px;margin:6px 0}
+.drawer .r span:first-child{width:110px;color:var(--mid);font-size:12px}
+.drawer input[type=range]{flex:1;accent-color:var(--accent)}
+.drawer .v{width:46px;text-align:right;font-family:var(--display);font-weight:700}
+.hint{color:var(--dim);font-size:12px;line-height:1.5}
+.gate{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:24px;background:rgba(2,5,10,.82);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:5}
+.gate .panel{max-width:380px;padding:22px}
+.gate h2{font-family:var(--display);font-size:24px;letter-spacing:-.02em;margin:0 0 8px}
+.gate p{color:var(--mid);line-height:1.55;margin:0 0 16px}
+.gate .btn{width:100%;padding:12px}
+.err{color:var(--warn);font-size:13px;margin-top:10px;line-height:1.5}
+.banner{position:fixed;left:50%;top:calc(92px + env(safe-area-inset-top));translate:-50% 0;padding:8px 14px;border-radius:10px;background:rgba(125,255,176,.14);border:1px solid rgba(125,255,176,.6);color:var(--good);font-weight:600;display:none;white-space:nowrap}
+.banner.on{display:block}
+</style>
+</head>
+<body>
+<div id="bg"></div>
+<video id="cam" playsinline muted autoplay></video>
+<canvas id="sky"></canvas>
+
+<div class="hud-top">
+  <a class="panel back" href="index.html">← Globe</a>
+  <div class="panel cdbox">
+    <div class="label" id="cdLabel">Next visible flyover</div>
+    <div class="cd" id="cd">—</div>
+    <div class="sub" id="cdSub">Finding your location…</div>
+  </div>
+</div>
+<div class="banner" id="banner"></div>
+
+<div class="hud-bot">
+  <div class="panel facing" id="facing">—</div>
+  <div class="panel drawer" id="drawer">
+    <div class="r"><span>Compass fix</span><input type="range" id="off" min="-45" max="45" step="1" value="0"><span class="v" id="offV">0°</span></div>
+    <div class="r"><span>Zoom (field of view)</span><input type="range" id="fov" min="35" max="90" step="1" value="62"><span class="v" id="fovV">62°</span></div>
+    <div class="hint">If the Sun or Moon marker isn't on the real one, slide "Compass fix" until it lines up. Wave the phone in a figure-8 to recalibrate its compass.</div>
+  </div>
+  <div class="tools">
+    <button class="btn" id="aim">Find ISS</button>
+    <button class="btn" id="preview">Preview pass</button>
+    <button class="btn" id="settings">Adjust</button>
+  </div>
+</div>
+
+<div class="gate" id="gate">
+  <div class="panel">
+    <h2>Point your phone at the sky</h2>
+    <p>The camera shows the sky and the app draws where the ISS is, and the path it will take, using your phone's compass and tilt sensors.</p>
+    <button class="btn solid" id="start">Start sky view</button>
+    <button class="btn ghost" id="noCam" style="margin-top:8px">Continue without camera</button>
+    <div class="err" id="gateErr"></div>
+  </div>
+</div>
+
+<script src="vendor/satellite.min.js"></script>
+<script src="orbit.js"></script>
+<script src="sky.js"></script>
+<script>if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});</script>
+</body>
+</html>
